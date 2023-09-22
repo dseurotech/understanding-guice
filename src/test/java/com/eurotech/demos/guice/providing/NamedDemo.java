@@ -1,6 +1,7 @@
 package com.eurotech.demos.guice.providing;
 
 import com.eurotech.demos.guice.CannedAnswerProvider;
+import com.eurotech.demos.guice.GuiceKeysUtils;
 import com.eurotech.demos.guice.NumberProvider;
 import com.eurotech.demos.guice.TheAnswerProvider;
 import com.google.inject.AbstractModule;
@@ -18,6 +19,11 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Named;
 import java.util.Set;
 
+/**
+ * when you have to provide multiple implementations of a common interface, and you need to choose which one to use
+ *
+ * @see <a href="https://github.com/google/guice/wiki/BindingAnnotations#named">The official documentation</a> for further details.
+ */
 public class NamedDemo {
 
     @Test

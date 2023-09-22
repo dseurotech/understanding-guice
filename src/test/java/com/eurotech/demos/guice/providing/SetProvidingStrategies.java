@@ -1,6 +1,7 @@
 package com.eurotech.demos.guice.providing;
 
 import com.eurotech.demos.guice.CannedAnswerProvider;
+import com.eurotech.demos.guice.GuiceKeysUtils;
 import com.eurotech.demos.guice.NumberProvider;
 import com.eurotech.demos.guice.TheAnswerProvider;
 import com.google.inject.AbstractModule;
@@ -14,7 +15,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-public class MultipleProvidingStrategies {
+/**
+ * On how to provide multiple implementations of an interface, grouped into sets
+ *
+ * @see <a href="https://github.com/google/guice/wiki/Multibindings#multibindings">The official documentation</a> for further details
+ */
+public class SetProvidingStrategies {
 
     @Test
     void providesIntoSet() {
@@ -31,7 +37,7 @@ public class MultipleProvidingStrategies {
                 new AbstractModule() {
                     @Override
                     protected void configure() {
-                        //Each module can redefine the multibinder, despite the "new" in "newSetBinder" they will all merge in the end
+                        //Each module can redefine the multibinder, despite the word "new" in "newSetBinder" they will all merge in the end
                         Multibinder<NumberProvider> setBinder = Multibinder.newSetBinder(binder(), NumberProvider.class);
                         //toInstance automatically implied Singleton injection
                         setBinder.addBinding().toInstance(new CannedAnswerProvider(33));

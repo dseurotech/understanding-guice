@@ -10,6 +10,11 @@ import com.google.inject.Singleton;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+/**
+ * showcases guice module examples, and different strategies to provide collaborators
+ *
+ * @see <a href="https://github.com/google/guice/wiki/LinkedBindings">The official documentation</a> for further details.
+ */
 public class ProvidingStrategiesDemos {
 
     @Test

@@ -1,4 +1,4 @@
-package com.eurotech.demos.guice.providing;
+package com.eurotech.demos.guice;
 
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
@@ -13,11 +13,11 @@ public class GuiceKeysUtils {
         return Key.get((TypeLiteral<Set<T>>) TypeLiteral.get(setOf(type)));
     }
 
-    public static <T> Key<Set<T>> keyForSetOf(Class<T> type, String name) {
-        return Key.get((TypeLiteral<Set<T>>) TypeLiteral.get(setOf(type)), Names.named(name));
+    public static <T> Key<Set<T>> keyForSetOf(Class<T> type, String named) {
+        return Key.get((TypeLiteral<Set<T>>) TypeLiteral.get(setOf(type)), Names.named(named));
     }
 
-    public static <T> Key<T> named(Class<T> type, String name) {
-        return Key.get(type, Names.named(name));
+    public static <T> Key<T> named(Class<T> type, String named) {
+        return Key.get(type, Names.named(named));
     }
 }
