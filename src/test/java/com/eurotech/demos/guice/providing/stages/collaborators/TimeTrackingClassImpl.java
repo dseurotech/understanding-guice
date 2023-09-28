@@ -1,4 +1,4 @@
-package com.eurotech.demos.guice.providing.stages.classes;
+package com.eurotech.demos.guice.providing.stages.collaborators;
 
 import java.time.Instant;
 import java.util.Date;

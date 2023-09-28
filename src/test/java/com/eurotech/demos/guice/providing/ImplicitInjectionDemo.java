@@ -1,8 +1,8 @@
 package com.eurotech.demos.guice.providing;
 
-import com.eurotech.demos.guice.CompositeCollaborator;
-import com.eurotech.demos.guice.NumberProvider;
-import com.eurotech.demos.guice.TheAnswerProvider;
+import com.eurotech.demos.guice.providing.collaborators.CompositeCollaborator;
+import com.eurotech.demos.guice.providing.collaborators.NumberProvider;
+import com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;

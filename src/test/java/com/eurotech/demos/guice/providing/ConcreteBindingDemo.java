@@ -1,8 +1,8 @@
 package com.eurotech.demos.guice.providing;
 
-import com.eurotech.demos.guice.CannedAnswerProvider;
-import com.eurotech.demos.guice.NumberProvider;
-import com.eurotech.demos.guice.TheAnswerProvider;
+import com.eurotech.demos.guice.providing.collaborators.CannedAnswerProvider;
+import com.eurotech.demos.guice.providing.collaborators.NumberProvider;
+import com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider;
 import com.google.inject.AbstractModule;
 import com.google.inject.ConfigurationException;
 import com.google.inject.CreationException;
@@ -70,7 +70,7 @@ public class ConcreteBindingDemo {
                 "======================\n" +
                 "Full classname legend:\n" +
                 "======================\n" +
-                "NumberProvider: \"com.eurotech.demos.guice.NumberProvider\"\n" +
+                "NumberProvider: \"com.eurotech.demos.guice.providing.collaborators.NumberProvider\"\n" +
                 "========================\n" +
                 "End of classname legend:\n" +
                 "========================\n" +
@@ -100,7 +100,7 @@ public class ConcreteBindingDemo {
                 "Full classname legend:\n" +
                 "======================\n" +
                 "ConcreteBindingDemo$1: \"com.eurotech.demos.guice.providing.ConcreteBindingDemo$1\"\n" +
-                "TheAnswerProvider:     \"com.eurotech.demos.guice.TheAnswerProvider\"\n" +
+                "TheAnswerProvider:     \"com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider\"\n" +
                 "========================\n" +
                 "End of classname legend:\n" +
                 "========================\n" +

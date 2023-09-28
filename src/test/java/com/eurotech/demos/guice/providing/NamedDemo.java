@@ -1,9 +1,9 @@
 package com.eurotech.demos.guice.providing;
 
-import com.eurotech.demos.guice.CannedAnswerProvider;
 import com.eurotech.demos.guice.GuiceKeysUtils;
-import com.eurotech.demos.guice.NumberProvider;
-import com.eurotech.demos.guice.TheAnswerProvider;
+import com.eurotech.demos.guice.providing.collaborators.CannedAnswerProvider;
+import com.eurotech.demos.guice.providing.collaborators.NumberProvider;
+import com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider;
 import com.google.inject.AbstractModule;
 import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
@@ -72,7 +72,7 @@ public class NamedDemo {
                         "Named:          \"com.google.inject.name.Named\"\n" +
                         "NamedDemo$1:    \"com.eurotech.demos.guice.providing.NamedDemo$1\"\n" +
                         "NamedDemo$2:    \"com.eurotech.demos.guice.providing.NamedDemo$2\"\n" +
-                        "NumberProvider: \"com.eurotech.demos.guice.NumberProvider\"\n" +
+                        "NumberProvider: \"com.eurotech.demos.guice.providing.collaborators.NumberProvider\"\n" +
                         "========================\n" +
                         "End of classname legend:\n" +
                         "========================\n")

@@ -1,9 +1,16 @@
 package com.eurotech.demos.guice.providing.stages;
 
-import com.eurotech.demos.guice.providing.stages.classes.TimeTrackingClass;
+import com.eurotech.demos.guice.GuiceKeysUtils;
+import com.eurotech.demos.guice.providing.stages.collaborators.LeafClass;
+import com.eurotech.demos.guice.providing.stages.collaborators.LeafClassImpl;
+import com.eurotech.demos.guice.providing.stages.collaborators.TimeTrackingClass;
+import com.eurotech.demos.guice.providing.stages.collaborators.TimeTrackingClassImpl;
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.google.inject.Stage;
+import com.google.inject.name.Names;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,45 +24,77 @@ public class InstantiationTimeDemo {
 
     final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME.withZone(ZoneId.systemDefault());
 
-    @Test
-    public void developmentStageInstantiateWhenRequested() throws InterruptedException {
-        final Instant startupTime = new Date().toInstant();
-        System.out.println(String.format("Startup %s: %s", Stage.DEVELOPMENT, formatter.format(startupTime)));
-        final Injector injector = Guice.createInjector(Stage.DEVELOPMENT, new ProvidingModule(false));
-        Thread.sleep(500);
-        final Instant instantiationTime = new Date().toInstant();
-        final TimeTrackingClass instance = injector.getInstance(TimeTrackingClass.class);
-        System.out.println(String.format("Instantiated at: %s", formatter.format(instantiationTime)));
-        System.out.println(String.format("Instantiated with stage %s: %s", Stage.DEVELOPMENT, formatter.format(instance.getInstantiatedOn())));
-        final long distanceFromStartup = calculateDistance(startupTime, instance.getInstantiatedOn());
-        final long distanceFromRequest = calculateDistance(instantiationTime, instance.getInstantiatedOn());
-        System.out.println(String.format("Distance from injector creation: %d ms", distanceFromStartup));
-        System.out.println(String.format("Distance from instance retrieval: %d ms", distanceFromRequest));
-        Assertions.assertFalse(distanceFromStartup < 50);
-        Assertions.assertTrue(distanceFromRequest < 50);
+    public static class ProvidingModule extends AbstractModule {
+        @Override
+        protected void configure() {
+            bind(TimeTrackingClass.class).to(TimeTrackingClassImpl.class).in(Singleton.class);
+            bind(LeafClass.class).annotatedWith(Names.named("guiceControlled")).to(LeafClassImpl.class).in(Singleton.class);
+            bind(LeafClass.class).annotatedWith(Names.named("concreteInstance")).toInstance(new LeafClassImpl(new TimeTrackingClassImpl()));
+        }
     }
 
     @Test
-    public void productionStageInstantiateWhenDeclared() throws InterruptedException {
-        final Instant startupTime = new Date().toInstant();
-        System.out.println(String.format("Startup %s: %s", Stage.PRODUCTION, formatter.format(startupTime)));
-        final Injector injector = Guice.createInjector(Stage.PRODUCTION, new ProvidingModule(false));
-        Thread.sleep(500);
-        final Instant instantiationTime = new Date().toInstant();
-        final TimeTrackingClass instance = injector.getInstance(TimeTrackingClass.class);
-        System.out.println(String.format("Instantiated at: %s", formatter.format(instantiationTime)));
-        System.out.println(String.format("Instantiated with stage %s: %s", Stage.PRODUCTION, formatter.format(instance.getInstantiatedOn())));
-        final long distanceFromStartup = calculateDistance(startupTime, instance.getInstantiatedOn());
-        final long distanceFromRequest = calculateDistance(instantiationTime, instance.getInstantiatedOn());
-        System.out.println(String.format("Distance from injector creation: %d ms", distanceFromStartup));
-        System.out.println(String.format("Distance from instance retrieval: %d ms", distanceFromRequest));
-        Assertions.assertTrue(distanceFromStartup < 50);
-        Assertions.assertFalse(distanceFromRequest < 50);
+    public void developStageDemo() throws InterruptedException {
+        final Stage stage = Stage.DEVELOPMENT;
+        final Instant injectorCreationTime = new Date().toInstant();
+        final Injector injector = Guice.createInjector(stage, new ProvidingModule());
+        Thread.sleep(800);
+        final Instant instanceRequestTime = new Date().toInstant();
+        final LeafClass guiceInstance = injector.getInstance(GuiceKeysUtils.named(LeafClass.class, "guiceControlled"));
+        final LeafClass concreteInstance = injector.getInstance(GuiceKeysUtils.named(LeafClass.class, "concreteInstance"));
+        //Guice-controlled singleton is created when requested in DEVELOP mode
+        checkTimes(injectorCreationTime, instanceRequestTime, guiceInstance.getTimeTrackingClass().getInstantiatedOn(), stage.name() + " guice-controlled", Expected.CloserToInstanceRequest);
+        //Concrete class is instantiated at injector creation
+        checkTimes(injectorCreationTime, instanceRequestTime, concreteInstance.getTimeTrackingClass().getInstantiatedOn(), stage.name() + " concrete instance", Expected.CloserToInjectorCreation);
+    }
+
+    @Test
+    public void productionStageDemo() throws InterruptedException {
+        final Stage stage = Stage.PRODUCTION;
+        final Instant injectorCreationTime = new Date().toInstant();
+        final Injector injector = Guice.createInjector(stage, new ProvidingModule());
+        Thread.sleep(800);
+        final Instant instanceRequestTime = new Date().toInstant();
+        final LeafClass guiceInstance = injector.getInstance(GuiceKeysUtils.named(LeafClass.class, "guiceControlled"));
+        final LeafClass concreteInstance = injector.getInstance(GuiceKeysUtils.named(LeafClass.class, "concreteInstance"));
+        //Guice-controlled is instantiated at injector creation in PRODUCTION stage
+        checkTimes(injectorCreationTime, instanceRequestTime, guiceInstance.getTimeTrackingClass().getInstantiatedOn(), stage.name() + " guice-controlled", Expected.CloserToInjectorCreation);
+        //Concrete class is instantiated at injector creation
+        checkTimes(injectorCreationTime, instanceRequestTime, concreteInstance.getTimeTrackingClass().getInstantiatedOn(), stage.name() + " concrete instance", Expected.CloserToInjectorCreation);
+
     }
 
     private long calculateDistance(Instant t1, Instant t2) {
         return Math.abs(Duration.between(t1, t2).toMillis());
     }
 
+    private enum Expected {
+        CloserToInjectorCreation,
+        CloserToInstanceRequest
+    }
+
+    private void checkTimes(Instant injectorCreationTime, Instant objectRequestTime, Instant instanceInternalTime, String context, Expected expectation) {
+        System.out.println(String.format("%s: injector creation time: %s", context, formatter.format(injectorCreationTime)));
+        System.out.println(String.format("%s: instance request  time: %s", context, formatter.format(objectRequestTime)));
+        System.out.println(String.format("%s: instance creation time: %s", context, formatter.format(instanceInternalTime)));
+        final long distanceFromInjectorCreation = calculateDistance(injectorCreationTime, instanceInternalTime);
+        final long distanceFromInstanceRequest = calculateDistance(objectRequestTime, instanceInternalTime);
+        System.out.println(String.format("%s: Distance from injector creation: %d ms", context, distanceFromInjectorCreation));
+        System.out.println(String.format("%s: Distance from instance request : %d ms", context, distanceFromInstanceRequest));
+        switch (expectation) {
+            case CloserToInjectorCreation:
+                Assertions.assertTrue(distanceFromInjectorCreation < 400);
+                Assertions.assertTrue(distanceFromInstanceRequest > 400);
+                Assertions.assertTrue(distanceFromInjectorCreation < distanceFromInstanceRequest);
+                System.out.println(String.format("%s: Closer to Injector Creation\n", context));
+                break;
+            case CloserToInstanceRequest:
+                Assertions.assertTrue(distanceFromInjectorCreation > 400);
+                Assertions.assertTrue(distanceFromInstanceRequest < 400);
+                Assertions.assertTrue(distanceFromInjectorCreation > distanceFromInstanceRequest);
+                System.out.println(String.format("%s: Closer to Instance request\n", context));
+                break;
+        }
+    }
 }
 

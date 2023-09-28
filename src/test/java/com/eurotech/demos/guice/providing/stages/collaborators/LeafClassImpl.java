@@ -1,13 +1,13 @@
-package com.eurotech.demos.guice.providing.stages.classes;
+package com.eurotech.demos.guice.providing.stages.collaborators;
 
 import javax.inject.Inject;
 
-public class IntermediateClassImpl implements IntermediateClass {
+public class LeafClassImpl implements LeafClass {
 
     private final TimeTrackingClass timeTrackingClass;
 
     @Inject
-    public IntermediateClassImpl(TimeTrackingClass timeTrackingClass) {
+    public LeafClassImpl(TimeTrackingClass timeTrackingClass) {
         this.timeTrackingClass = timeTrackingClass;
     }
 

@@ -1,4 +1,4 @@
-package com.eurotech.demos.guice;
+package com.eurotech.demos.guice.providing.collaborators;
 
 public class CompositeCollaborator {
 
@@ -10,10 +10,6 @@ public class CompositeCollaborator {
 
     public CompositeCollaborator(NumberProvider numberProvider) {
         this.numberProvider = numberProvider;
-    }
-
-    public int doubleTheNumber() {
-        return numberProvider.giveMeTheNumber() * 2;
     }
 
     @Override

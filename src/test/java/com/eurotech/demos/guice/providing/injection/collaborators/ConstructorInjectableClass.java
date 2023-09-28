@@ -1,6 +1,6 @@
-package com.eurotech.demos.guice.providing.injection;
+package com.eurotech.demos.guice.providing.injection.collaborators;
 
-import com.eurotech.demos.guice.NumberProvider;
+import com.eurotech.demos.guice.providing.collaborators.NumberProvider;
 
 import javax.inject.Inject;
 import javax.inject.Named;

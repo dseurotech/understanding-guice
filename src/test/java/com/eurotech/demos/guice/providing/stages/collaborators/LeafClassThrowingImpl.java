@@ -1,11 +1,11 @@
-package com.eurotech.demos.guice.providing.stages.classes;
+package com.eurotech.demos.guice.providing.stages.collaborators;
 
 import javax.inject.Inject;
 
-public class IntermediateClassThrowingImpl implements IntermediateClass {
+public class LeafClassThrowingImpl implements LeafClass {
 
     @Inject
-    public IntermediateClassThrowingImpl() {
+    public LeafClassThrowingImpl() {
         throw new RuntimeException("Cannot Instantiate this!");
     }
 

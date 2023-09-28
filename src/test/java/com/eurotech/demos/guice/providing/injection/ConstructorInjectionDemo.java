@@ -1,9 +1,10 @@
 package com.eurotech.demos.guice.providing.injection;
 
-import com.eurotech.demos.guice.CannedAnswerProvider;
-import com.eurotech.demos.guice.CompositeCollaborator;
-import com.eurotech.demos.guice.NumberProvider;
-import com.eurotech.demos.guice.TheAnswerProvider;
+import com.eurotech.demos.guice.providing.collaborators.CannedAnswerProvider;
+import com.eurotech.demos.guice.providing.collaborators.CompositeCollaborator;
+import com.eurotech.demos.guice.providing.collaborators.NumberProvider;
+import com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider;
+import com.eurotech.demos.guice.providing.injection.collaborators.ConstructorInjectableClass;
 import com.google.inject.AbstractModule;
 import com.google.inject.CreationException;
 import com.google.inject.Guice;
@@ -108,7 +109,7 @@ public class ConstructorInjectionDemo {
                 "======================\n" +
                 "Full classname legend:\n" +
                 "======================\n" +
-                "CompositeCollaborator: \"com.eurotech.demos.guice.CompositeCollaborator\"\n" +
+                "CompositeCollaborator: \"com.eurotech.demos.guice.providing.collaborators.CompositeCollaborator\"\n" +
                 "ConstructorInjectionDemo$3:       \"com.eurotech.demos.guice.providing.injection.ConstructorInjectionDemo$3\"\n" +
                 "========================\n" +
                 "End of classname legend:\n" +
