@@ -1,6 +1,5 @@
 package com.eurotech.demos.guice;
 
-import com.eurotech.demos.guice.providing.collaborators.NumberProvider;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;

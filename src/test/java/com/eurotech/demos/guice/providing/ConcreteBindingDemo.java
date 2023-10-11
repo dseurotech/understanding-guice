@@ -1,7 +1,7 @@
 package com.eurotech.demos.guice.providing;
 
+import com.eurotech.demos.guice.NumberProvider;
 import com.eurotech.demos.guice.providing.collaborators.CannedAnswerProvider;
-import com.eurotech.demos.guice.providing.collaborators.NumberProvider;
 import com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider;
 import com.google.inject.AbstractModule;
 import com.google.inject.ConfigurationException;
@@ -70,7 +70,7 @@ public class ConcreteBindingDemo {
                 "======================\n" +
                 "Full classname legend:\n" +
                 "======================\n" +
-                "NumberProvider: \"com.eurotech.demos.guice.providing.collaborators.NumberProvider\"\n" +
+                "NumberProvider: \"com.eurotech.demos.guice.NumberProvider\"\n" +
                 "========================\n" +
                 "End of classname legend:\n" +
                 "========================\n" +
@@ -91,7 +91,7 @@ public class ConcreteBindingDemo {
             }
         }), "Unable to create injector, see the following errors:\n" +
                 "\n" +
-                "1) [Guice/RecursiveBinding]: Binding points to itself. Key: TheAnswerProvider\n" +
+                "1) [Guice/RecursiveBinding]: Binding points to itself. Key: SimpleNumberProvider\n" +
                 "  at ConcreteBindingDemo$1.configure(ConcreteBindingDemo.java:24)\n" +
                 "\n" +
                 "1 error\n" +
@@ -100,7 +100,7 @@ public class ConcreteBindingDemo {
                 "Full classname legend:\n" +
                 "======================\n" +
                 "ConcreteBindingDemo$1: \"com.eurotech.demos.guice.providing.ConcreteBindingDemo$1\"\n" +
-                "TheAnswerProvider:     \"com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider\"\n" +
+                "SimpleNumberProvider:     \"com.eurotech.demos.guice.providing.collaborators.SimpleNumberProvider\"\n" +
                 "========================\n" +
                 "End of classname legend:\n" +
                 "========================\n" +

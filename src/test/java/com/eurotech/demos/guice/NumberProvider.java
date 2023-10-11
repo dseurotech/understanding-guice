@@ -1,4 +1,4 @@
-package com.eurotech.demos.guice.providing.collaborators;
+package com.eurotech.demos.guice;
 
 public interface NumberProvider {
 

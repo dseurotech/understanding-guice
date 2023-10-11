@@ -1,13 +1,12 @@
 package com.eurotech.demos.guice.providing;
 
-import com.eurotech.demos.guice.providing.collaborators.NumberProvider;
-import com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider;
+import com.eurotech.demos.guice.NumberProvider;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -17,56 +16,52 @@ import org.junit.jupiter.api.Test;
  */
 public class ProvidingStrategiesDemos {
 
-    @Test
-    public void configure() {
-        final Injector injector = Guice.createInjector(new AbstractModule() {
-            @Override
-            protected void configure() {
-                bind(NumberProvider.class).to(TheAnswerProvider.class);
-            }
-        });
-        final NumberProvider provided1 = injector.getInstance(NumberProvider.class);
-        final NumberProvider provided2 = injector.getInstance(NumberProvider.class);
-        Assertions.assertNotEquals(provided1, provided2);
+    public static class SimpleNumberProvider implements NumberProvider {
+        public SimpleNumberProvider() {
+        }
+
+        @Override
+        public int giveMeTheNumber() {
+            return 42;
+        }
     }
 
     @Test
-    public void configureWithSingleton() {
+    @DisplayName("Binding the collaborator, keyed to its interface type")
+    public void bind() {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(NumberProvider.class).to(TheAnswerProvider.class).in(Singleton.class);
+                bind(NumberProvider.class).to(SimpleNumberProvider.class);
             }
         });
-        final NumberProvider provided1 = injector.getInstance(NumberProvider.class);
-        final NumberProvider provided2 = injector.getInstance(NumberProvider.class);
-        Assertions.assertEquals(provided1, provided2);
+        final NumberProvider providedByInterface = injector.getInstance(NumberProvider.class);
+        System.out.println(providedByInterface);
+        Assertions.assertNotNull(providedByInterface);
     }
 
     @Test
+    @DisplayName("Providing the collaborator manually")
     public void provides() {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Provides
             NumberProvider numberProvider() {
-                return new TheAnswerProvider();
+                return new SimpleNumberProvider();
             }
         });
-        final NumberProvider provided1 = injector.getInstance(NumberProvider.class);
-        final NumberProvider provided2 = injector.getInstance(NumberProvider.class);
-        Assertions.assertNotEquals(provided1, provided2);
+        final NumberProvider providedByInterface = injector.getInstance(NumberProvider.class);
+        System.out.println(providedByInterface);
+        Assertions.assertNotNull(providedByInterface);
     }
 
     @Test
-    public void providesWithSingleton() {
+    @DisplayName("If the class is easily instantiable (parameterless constructor), Guice builds it on the fly upon request")
+    public void autoBuilds() {
         final Injector injector = Guice.createInjector(new AbstractModule() {
-            @Provides
-            @Singleton
-            NumberProvider numberProvider() {
-                return new TheAnswerProvider();
-            }
         });
-        final NumberProvider provided1 = injector.getInstance(NumberProvider.class);
-        final NumberProvider provided2 = injector.getInstance(NumberProvider.class);
-        Assertions.assertEquals(provided1, provided2);
+        final NumberProvider builtOnTheFly = injector.getInstance(SimpleNumberProvider.class);
+        System.out.println(builtOnTheFly);
+        Assertions.assertNotNull(builtOnTheFly);
     }
+
 }

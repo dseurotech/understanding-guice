@@ -8,8 +8,10 @@ This is the suggested running order:
 
 * ## Provising:
     * _ProvidingStrategiesDemo_: showcases guice module examples, and different strategies to provide collaborators
+    * _SingletonDemo_: Different ways to provide a collaborator as singleton (or not)
     * _MoreSingletonExamples_: expands the use of Singleton providing
     * _SetProvidingStrategies_: on how to provide multiple implementations of an interface, grouped into sets
+    * _MapProvidingStrategies_: on how to provide multiple implementations of an interface, grouped into a map, indexed by key
     * _NamedDemo_: when you have to provide multiple implementations of a common interface, and you need to choose which one to use
     * _ConcreteBindingDemo_: Demonstrate how to bind concrete classes, without relying on an interface
     * _ImplicitInjectionDemo_: Provided objects are automatically passed to other providing methods (a.k.a.: Linked Binding)
