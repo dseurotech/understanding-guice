@@ -15,6 +15,7 @@ This is the suggested running order:
     * _NamedDemo_: when you have to provide multiple implementations of a common interface, and you need to choose which one to use
     * _ConcreteBindingDemo_: Demonstrate how to bind concrete classes, without relying on an interface
     * _ImplicitInjectionDemo_: Provided objects are automatically passed to other providing methods (a.k.a.: Linked Binding)
+    * _ProviderTest_: Showcases the initialization sequence when using custom providers
 * ## Injection:
     * _ConstructorInjectionDemo_: Different constructor injection examples
     * _FieldInjectionDemo_: Different field injection examples

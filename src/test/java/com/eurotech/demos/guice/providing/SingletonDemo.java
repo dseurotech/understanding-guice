@@ -34,7 +34,7 @@ public class SingletonDemo {
 
     @Test
     @DisplayName("Even if not explicitly configured as singleton in the binding declaration, it still is a singleton")
-    public void singletonAnnotatedClassIsSingletonEvenIfNotExplicityInScope() {
+    public void singletonAnnotatedClassIsSingletonEvenIfNotExplicitlyInScope() {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
@@ -43,6 +43,18 @@ public class SingletonDemo {
         });
 
         assert_Is_Singleton(() -> injector.getInstance(NumberProvider.class));
+    }
+
+    @Test
+    @DisplayName("Singleton-annotated class is still instantiated as a singleton, even if not explicitly bound")
+    public void singletonAnnotatedClassIsSingletonEvenIfNotExplicitltBound() {
+        final Injector injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+            }
+        });
+
+        assert_Is_Singleton(() -> injector.getInstance(SingletonAnnotatedClass.class));
     }
 
     @Test
