@@ -15,7 +15,7 @@ public class GuiceKeysUtils {
         return Key.get((TypeLiteral<Set<T>>) TypeLiteral.get(setOf(type)));
     }
 
-    public static <T> Key<Map<String, T>> keyForMapOf(Class<String> keyType, Class<NumberProvider> valueType) {
+    public static <T> Key<Map<String, T>> keyForMapOf(Class<String> keyType, Class<NumberFactory> valueType) {
         return Key.get((TypeLiteral<Map<String, T>>) TypeLiteral.get(mapOf(keyType, valueType)));
     }
 

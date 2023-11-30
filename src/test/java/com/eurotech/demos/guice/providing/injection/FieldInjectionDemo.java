@@ -1,8 +1,8 @@
 package com.eurotech.demos.guice.providing.injection;
 
-import com.eurotech.demos.guice.NumberProvider;
-import com.eurotech.demos.guice.providing.collaborators.CannedAnswerProvider;
-import com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider;
+import com.eurotech.demos.guice.NumberFactory;
+import com.eurotech.demos.guice.providing.collaborators.CannedAnswerFactory;
+import com.eurotech.demos.guice.providing.collaborators.TheAnswerFactory;
 import com.eurotech.demos.guice.providing.injection.collaborators.FieldInjectableClass;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -27,7 +27,7 @@ public class FieldInjectionDemo {
                 bind(String.class)
                         .annotatedWith(Names.named("theName"))
                         .toInstance("pippo");
-                bind(NumberProvider.class).to(TheAnswerProvider.class);
+                bind(NumberFactory.class).to(TheAnswerFactory.class);
                 //Direct binding of a concrete type, associated to itself
                 bind(FieldInjectableClass.class);
             }
@@ -37,7 +37,7 @@ public class FieldInjectionDemo {
         System.out.println(instance);
         Assertions.assertNotNull(instance);
         Assertions.assertEquals("pippo", instance.name);
-        Assertions.assertNotNull(instance.numberProvider);
+        Assertions.assertNotNull(instance.numberFactory);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class FieldInjectionDemo {
                 //Inject directives written inside the class will be ignored here
                 final FieldInjectableClass instance = new FieldInjectableClass();
                 instance.name = "pluto";
-                instance.numberProvider = new CannedAnswerProvider(44);
+                instance.numberFactory = new CannedAnswerFactory(44);
                 return instance;
             }
         });
@@ -64,8 +64,8 @@ public class FieldInjectionDemo {
         System.out.println(instancedThroughConstructor);
         Assertions.assertNotNull(instancedThroughConstructor);
         Assertions.assertEquals("pluto", instancedThroughConstructor.name);
-        Assertions.assertNotNull(instancedThroughConstructor.numberProvider);
-        Assertions.assertEquals(CannedAnswerProvider.class, instancedThroughConstructor.numberProvider.getClass());
+        Assertions.assertNotNull(instancedThroughConstructor.numberFactory);
+        Assertions.assertEquals(CannedAnswerFactory.class, instancedThroughConstructor.numberFactory.getClass());
     }
 
     @Test
@@ -76,7 +76,7 @@ public class FieldInjectionDemo {
                 bind(String.class)
                         .annotatedWith(Names.named("theName"))
                         .toInstance("pippo");
-                bind(NumberProvider.class).to(TheAnswerProvider.class);
+                bind(NumberFactory.class).to(TheAnswerFactory.class);
                 //Class is not directly bound!!!!
 //                bind(FieldInjectableClass.class);
             }
@@ -87,7 +87,7 @@ public class FieldInjectionDemo {
         System.out.println(instance);
         Assertions.assertNotNull(instance);
         Assertions.assertEquals("pippo", instance.name);
-        Assertions.assertNotNull(instance.numberProvider);
+        Assertions.assertNotNull(instance.numberFactory);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.eurotech.demos.guice.providing.overrides;
 
-import com.eurotech.demos.guice.NumberProvider;
-import com.eurotech.demos.guice.providing.collaborators.CannedAnswerProvider;
+import com.eurotech.demos.guice.NumberFactory;
+import com.eurotech.demos.guice.providing.collaborators.CannedAnswerFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -18,16 +18,16 @@ public class OverrideDemo {
         final Injector injector = Guice.createInjector(Modules.override(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(NumberProvider.class).toInstance(new CannedAnswerProvider(33));
+                bind(NumberFactory.class).toInstance(new CannedAnswerFactory(33));
             }
         }).with(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(NumberProvider.class).toInstance(new CannedAnswerProvider(44));
+                bind(NumberFactory.class).toInstance(new CannedAnswerFactory(44));
             }
         }));
 
-        final NumberProvider res = injector.getInstance(NumberProvider.class);
+        final NumberFactory res = injector.getInstance(NumberFactory.class);
         Assertions.assertNotNull(res);
         System.out.println(String.format("%s: %d", res, res.giveMeTheNumber()));
         Assertions.assertEquals(44, res.giveMeTheNumber());
@@ -37,17 +37,17 @@ public class OverrideDemo {
     public void canOverrideKey2() {
         final Injector injector = Guice.createInjector(Modules.override(new AbstractModule() {
             @Provides
-            NumberProvider numberProvider() {
-                return new CannedAnswerProvider(33);
+            NumberFactory numberFactory() {
+                return new CannedAnswerFactory(33);
             }
         }).with(new AbstractModule() {
             @Provides
-            NumberProvider numberProvider() {
-                return new CannedAnswerProvider(44);
+            NumberFactory numberFactory() {
+                return new CannedAnswerFactory(44);
             }
         }));
 
-        final NumberProvider res = injector.getInstance(NumberProvider.class);
+        final NumberFactory res = injector.getInstance(NumberFactory.class);
         Assertions.assertNotNull(res);
         System.out.println(String.format("%s: %d", res, res.giveMeTheNumber()));
         Assertions.assertEquals(44, res.giveMeTheNumber());
@@ -57,20 +57,20 @@ public class OverrideDemo {
     public void cannotUseBaseObjectInOverride() {
         final Injector injector = Guice.createInjector(Modules.override(new AbstractModule() {
             @Provides
-            NumberProvider numberProvider() {
-                return new CannedAnswerProvider(33);
+            NumberFactory numberFactory() {
+                return new CannedAnswerFactory(33);
             }
         }).with(new AbstractModule() {
             @Provides
-            NumberProvider numberProvider(NumberProvider overridden) {
-                return new CannedAnswerProvider(overridden.giveMeTheNumber());
+            NumberFactory numberFactory(NumberFactory overridden) {
+                return new CannedAnswerFactory(overridden.giveMeTheNumber());
             }
         }));
         Assertions.assertThrows(ProvisionException.class, () ->
-                        injector.getInstance(NumberProvider.class),
+                        injector.getInstance(NumberFactory.class),
                 "1) [Guice/ErrorInCustomProvider]: IllegalStateException: This is a proxy used to support circular references. The object we're proxying is not constructed yet. Please wait until after injection has completed to use this object.\n" +
-                        "  at OverrideDemo$5.numberProvider(OverrideDemo.java:65)\n" +
+                        "  at OverrideDemo$5.numberFactory(OverrideDemo.java:65)\n" +
                         "      \\_ installed by: Modules$OverrideModule -> OverrideDemo$5\n" +
-                        "  while locating NumberProvider");
+                        "  while locating NumberFactory");
     }
 }

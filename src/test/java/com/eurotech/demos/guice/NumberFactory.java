@@ -1,6 +1,6 @@
 package com.eurotech.demos.guice;
 
-public interface NumberProvider {
+public interface NumberFactory {
 
     int giveMeTheNumber();
 

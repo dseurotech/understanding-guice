@@ -1,9 +1,9 @@
 package com.eurotech.demos.guice.providing.injection;
 
-import com.eurotech.demos.guice.NumberProvider;
-import com.eurotech.demos.guice.providing.collaborators.CannedAnswerProvider;
+import com.eurotech.demos.guice.NumberFactory;
+import com.eurotech.demos.guice.providing.collaborators.CannedAnswerFactory;
 import com.eurotech.demos.guice.providing.collaborators.CompositeCollaborator;
-import com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider;
+import com.eurotech.demos.guice.providing.collaborators.TheAnswerFactory;
 import com.eurotech.demos.guice.providing.injection.collaborators.ConstructorInjectableClass;
 import com.google.inject.AbstractModule;
 import com.google.inject.CreationException;
@@ -30,7 +30,7 @@ public class ConstructorInjectionDemo {
                 bind(String.class)
                         .annotatedWith(Names.named("theName"))
                         .toInstance("pippo");
-                bind(NumberProvider.class).to(TheAnswerProvider.class);
+                bind(NumberFactory.class).to(TheAnswerFactory.class);
                 //Direct binding of a concrete type, associated to itself
                 bind(ConstructorInjectableClass.class);
             }
@@ -40,7 +40,7 @@ public class ConstructorInjectionDemo {
         System.out.println(instancedThroughConstructor);
         Assertions.assertNotNull(instancedThroughConstructor);
         Assertions.assertEquals("pippo", instancedThroughConstructor.name);
-        Assertions.assertNotNull(instancedThroughConstructor.numberProvider);
+        Assertions.assertNotNull(instancedThroughConstructor.numberFactory);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class ConstructorInjectionDemo {
                 bind(String.class)
                         .annotatedWith(Names.named("theName"))
                         .toInstance("pippo");
-                bind(NumberProvider.class).to(TheAnswerProvider.class);
+                bind(NumberFactory.class).to(TheAnswerFactory.class);
                 //Class is not directly bound!!!!
 //                bind(ConstructorInjectableClass.class);
             }
@@ -62,7 +62,7 @@ public class ConstructorInjectionDemo {
         System.out.println(instancedThroughConstructor);
         Assertions.assertNotNull(instancedThroughConstructor);
         Assertions.assertEquals("pippo", instancedThroughConstructor.name);
-        Assertions.assertNotNull(instancedThroughConstructor.numberProvider);
+        Assertions.assertNotNull(instancedThroughConstructor.numberFactory);
     }
 
     @Test
@@ -70,9 +70,9 @@ public class ConstructorInjectionDemo {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(NumberProvider.class).to(TheAnswerProvider.class);
+                bind(NumberFactory.class).to(TheAnswerFactory.class);
                 try {
-                    bind(CompositeCollaborator.class).toConstructor(CompositeCollaborator.class.getConstructor(NumberProvider.class));
+                    bind(CompositeCollaborator.class).toConstructor(CompositeCollaborator.class.getConstructor(NumberFactory.class));
                 } catch (NoSuchMethodException e) {
                     throw new RuntimeException(e);
                 }
@@ -82,7 +82,7 @@ public class ConstructorInjectionDemo {
         final CompositeCollaborator instance = injector.getInstance(CompositeCollaborator.class);
         System.out.println(instance);
         Assertions.assertNotNull(instance);
-        Assertions.assertNotNull(instance.numberProvider);
+        Assertions.assertNotNull(instance.numberFactory);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class ConstructorInjectionDemo {
         Assertions.assertThrows(CreationException.class, () -> Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(NumberProvider.class).to(TheAnswerProvider.class);
+                bind(NumberFactory.class).to(TheAnswerFactory.class);
                 bind(CompositeCollaborator.class);
             }
         }), "No injectable constructor for type CompositeCollaborator.\n" +
@@ -127,13 +127,13 @@ public class ConstructorInjectionDemo {
                 bind(String.class)
                         .annotatedWith(Names.named("anotherName"))
                         .toInstance("pluto");
-                bind(NumberProvider.class).toInstance(new CannedAnswerProvider(44));
+                bind(NumberFactory.class).toInstance(new CannedAnswerFactory(44));
             }
 
             @Provides
-            ConstructorInjectableClass constructorInjectableClass(@Named("anotherName") String name, NumberProvider numberProvider) {
+            ConstructorInjectableClass constructorInjectableClass(@Named("anotherName") String name, NumberFactory numberFactory) {
                 //Inject directives written inside the class will be ignored here
-                return new ConstructorInjectableClass(name, numberProvider);
+                return new ConstructorInjectableClass(name, numberFactory);
             }
         });
 
@@ -141,8 +141,8 @@ public class ConstructorInjectionDemo {
         System.out.println(instancedThroughConstructor);
         Assertions.assertNotNull(instancedThroughConstructor);
         Assertions.assertEquals("pluto", instancedThroughConstructor.name);
-        Assertions.assertNotNull(instancedThroughConstructor.numberProvider);
-        Assertions.assertEquals(CannedAnswerProvider.class, instancedThroughConstructor.numberProvider.getClass());
+        Assertions.assertNotNull(instancedThroughConstructor.numberFactory);
+        Assertions.assertEquals(CannedAnswerFactory.class, instancedThroughConstructor.numberFactory.getClass());
     }
 
 }

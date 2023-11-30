@@ -1,6 +1,6 @@
 package com.eurotech.demos.guice.providing;
 
-import com.eurotech.demos.guice.NumberProvider;
+import com.eurotech.demos.guice.NumberFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
  */
 public class ProvidingStrategiesDemos {
 
-    public static class SimpleNumberProvider implements NumberProvider {
-        public SimpleNumberProvider() {
+    public static class SimpleNumberFactory implements NumberFactory {
+        public SimpleNumberFactory() {
         }
 
         @Override
@@ -32,10 +32,10 @@ public class ProvidingStrategiesDemos {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(NumberProvider.class).to(SimpleNumberProvider.class);
+                bind(NumberFactory.class).to(SimpleNumberFactory.class);
             }
         });
-        final NumberProvider providedByInterface = injector.getInstance(NumberProvider.class);
+        final NumberFactory providedByInterface = injector.getInstance(NumberFactory.class);
         System.out.println(providedByInterface);
         Assertions.assertNotNull(providedByInterface);
     }
@@ -45,11 +45,11 @@ public class ProvidingStrategiesDemos {
     public void provides() {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Provides
-            NumberProvider numberProvider() {
-                return new SimpleNumberProvider();
+            NumberFactory numberFactory() {
+                return new SimpleNumberFactory();
             }
         });
-        final NumberProvider providedByInterface = injector.getInstance(NumberProvider.class);
+        final NumberFactory providedByInterface = injector.getInstance(NumberFactory.class);
         System.out.println(providedByInterface);
         Assertions.assertNotNull(providedByInterface);
     }
@@ -59,7 +59,7 @@ public class ProvidingStrategiesDemos {
     public void autoBuilds() {
         final Injector injector = Guice.createInjector(new AbstractModule() {
         });
-        final NumberProvider builtOnTheFly = injector.getInstance(SimpleNumberProvider.class);
+        final NumberFactory builtOnTheFly = injector.getInstance(SimpleNumberFactory.class);
         System.out.println(builtOnTheFly);
         Assertions.assertNotNull(builtOnTheFly);
     }

@@ -1,6 +1,6 @@
 package com.eurotech.demos.guice.providing;
 
-import com.eurotech.demos.guice.NumberProvider;
+import com.eurotech.demos.guice.NumberFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -25,7 +25,7 @@ public class SingletonDemo {
      */
 
     @Singleton
-    public static class SingletonAnnotatedClass implements NumberProvider {
+    public static class SingletonAnnotatedClass implements NumberFactory {
         @Override
         public int giveMeTheNumber() {
             return 66;
@@ -38,11 +38,11 @@ public class SingletonDemo {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(NumberProvider.class).to(SingletonAnnotatedClass.class);
+                bind(NumberFactory.class).to(SingletonAnnotatedClass.class);
             }
         });
 
-        assert_Is_Singleton(() -> injector.getInstance(NumberProvider.class));
+        assert_Is_Singleton(() -> injector.getInstance(NumberFactory.class));
     }
 
     @Test
@@ -72,12 +72,12 @@ public class SingletonDemo {
     public void singletonAnnotatedClassIsNOTSingletonifProvidedManuallyWithoutAnnotation() {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Provides
-            NumberProvider annotatedClassButNotAnnotatedProvider() {
+            NumberFactory annotatedClassButNotAnnotated() {
                 return new SingletonAnnotatedClass();
             }
         });
 
-        assert_Is_NOT_Singleton(() -> injector.getInstance(NumberProvider.class));
+        assert_Is_NOT_Singleton(() -> injector.getInstance(NumberFactory.class));
     }
 
     @Test
@@ -86,18 +86,18 @@ public class SingletonDemo {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Provides
             @Singleton
-            NumberProvider annotated() {
+            NumberFactory annotated() {
                 return new SingletonAnnotatedClass();
             }
         });
 
-        assert_Is_Singleton(() -> injector.getInstance(NumberProvider.class));
+        assert_Is_Singleton(() -> injector.getInstance(NumberFactory.class));
     }
 
     /*
      * External  Class examples: The class is not marked as a Singleton, possibly because it comes from an external library, or it should not ALWAYS be a singleton
      */
-    public static class ExternalClassNotAnnotated implements NumberProvider {
+    public static class ExternalClassNotAnnotated implements NumberFactory {
         @Override
         public int giveMeTheNumber() {
             return 66;
@@ -110,11 +110,11 @@ public class SingletonDemo {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(NumberProvider.class).to(ExternalClassNotAnnotated.class);
+                bind(NumberFactory.class).to(ExternalClassNotAnnotated.class);
             }
         });
 
-        assert_Is_NOT_Singleton(() -> injector.getInstance(NumberProvider.class));
+        assert_Is_NOT_Singleton(() -> injector.getInstance(NumberFactory.class));
     }
 
 
@@ -124,11 +124,11 @@ public class SingletonDemo {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(NumberProvider.class).to(ExternalClassNotAnnotated.class).in(javax.inject.Singleton.class);
+                bind(NumberFactory.class).to(ExternalClassNotAnnotated.class).in(javax.inject.Singleton.class);
             }
         });
 
-        assert_Is_Singleton(() -> injector.getInstance(NumberProvider.class));
+        assert_Is_Singleton(() -> injector.getInstance(NumberFactory.class));
     }
 
     @Test
@@ -137,11 +137,11 @@ public class SingletonDemo {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(NumberProvider.class).to(ExternalClassNotAnnotated.class).in(Scopes.SINGLETON);
+                bind(NumberFactory.class).to(ExternalClassNotAnnotated.class).in(Scopes.SINGLETON);
             }
         });
 
-        assert_Is_Singleton(() -> injector.getInstance(NumberProvider.class));
+        assert_Is_Singleton(() -> injector.getInstance(NumberFactory.class));
     }
 
     @Test
@@ -150,11 +150,11 @@ public class SingletonDemo {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(NumberProvider.class).to(ExternalClassNotAnnotated.class).asEagerSingleton();
+                bind(NumberFactory.class).to(ExternalClassNotAnnotated.class).asEagerSingleton();
             }
         });
 
-        assert_Is_Singleton(() -> injector.getInstance(NumberProvider.class));
+        assert_Is_Singleton(() -> injector.getInstance(NumberFactory.class));
     }
 
     @Test
@@ -162,12 +162,12 @@ public class SingletonDemo {
     public void notAnnotatedClassIsNotSingletonIfProvidedAsIs() {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Provides
-            NumberProvider notAnnotated() {
+            NumberFactory notAnnotated() {
                 return new ExternalClassNotAnnotated();
             }
         });
 
-        assert_Is_NOT_Singleton(() -> injector.getInstance(NumberProvider.class));
+        assert_Is_NOT_Singleton(() -> injector.getInstance(NumberFactory.class));
     }
 
     @Test
@@ -176,20 +176,20 @@ public class SingletonDemo {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Provides
             @Singleton
-            NumberProvider notAnnotated() {
+            NumberFactory notAnnotated() {
                 return new ExternalClassNotAnnotated();
             }
         });
 
-        assert_Is_Singleton(() -> injector.getInstance(NumberProvider.class));
+        assert_Is_Singleton(() -> injector.getInstance(NumberFactory.class));
     }
 
     /**
      * Utility methods, used to de-clutter the tests and focus on the binding declaration
      */
-    private static void assert_Is_Singleton(Supplier<NumberProvider> instanceProvider) {
-        final NumberProvider firstInstance = instanceProvider.get();
-        final NumberProvider secondInstance = instanceProvider.get();
+    private static void assert_Is_Singleton(Supplier<NumberFactory> instanceSupplier) {
+        final NumberFactory firstInstance = instanceSupplier.get();
+        final NumberFactory secondInstance = instanceSupplier.get();
         System.out.println(String.format("First  instance: %s", firstInstance));
         System.out.println(String.format("Second instance: %s", secondInstance));
         Assertions.assertNotNull(firstInstance);
@@ -197,9 +197,9 @@ public class SingletonDemo {
         Assertions.assertEquals(firstInstance, secondInstance);
     }
 
-    private static void assert_Is_NOT_Singleton(Supplier<NumberProvider> instanceProvider) {
-        final NumberProvider firstInstance = instanceProvider.get();
-        final NumberProvider secondInstance = instanceProvider.get();
+    private static void assert_Is_NOT_Singleton(Supplier<NumberFactory> instanceSupplier) {
+        final NumberFactory firstInstance = instanceSupplier.get();
+        final NumberFactory secondInstance = instanceSupplier.get();
         System.out.println(String.format("First  instance: %s", firstInstance));
         System.out.println(String.format("Second instance: %s", secondInstance));
         Assertions.assertNotNull(firstInstance);

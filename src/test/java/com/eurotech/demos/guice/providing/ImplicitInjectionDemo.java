@@ -1,8 +1,8 @@
 package com.eurotech.demos.guice.providing;
 
-import com.eurotech.demos.guice.NumberProvider;
+import com.eurotech.demos.guice.NumberFactory;
 import com.eurotech.demos.guice.providing.collaborators.CompositeCollaborator;
-import com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider;
+import com.eurotech.demos.guice.providing.collaborators.TheAnswerFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -21,24 +21,24 @@ public class ImplicitInjectionDemo {
     public void linkedBindings() {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Provides
-            NumberProvider numberProvider() {
-                return new TheAnswerProvider();
+            NumberFactory numberFactory() {
+                return new TheAnswerFactory();
             }
 
             @Provides
-            CompositeCollaborator compositeCollaborator(NumberProvider numberProvider) {
-                return new CompositeCollaborator(numberProvider);
+            CompositeCollaborator compositeCollaborator(NumberFactory numberFactory) {
+                return new CompositeCollaborator(numberFactory);
             }
         });
         final CompositeCollaborator compositeCollaborator = injector.getInstance(CompositeCollaborator.class);
         System.out.println(compositeCollaborator);
-        // a number provider has been provided
-        Assertions.assertNotNull(compositeCollaborator.numberProvider);
+        // a number factory has been provided
+        Assertions.assertNotNull(compositeCollaborator.numberFactory);
 
-        final NumberProvider numberProvider = injector.getInstance(NumberProvider.class);
-        System.out.println(numberProvider);
-        //Because numberProvider is not a Singleton
-        Assertions.assertNotEquals(numberProvider, compositeCollaborator.numberProvider);
+        final NumberFactory numberFactory = injector.getInstance(NumberFactory.class);
+        System.out.println(numberFactory);
+        //Because numberFactory is not a Singleton
+        Assertions.assertNotEquals(numberFactory, compositeCollaborator.numberFactory);
     }
 
     @Test
@@ -46,24 +46,24 @@ public class ImplicitInjectionDemo {
         //Same as before, but now the two collaborators are defined in two separate modules (possibly in different projects)
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Provides
-            NumberProvider numberProvider() {
-                return new TheAnswerProvider();
+            NumberFactory numberFactory() {
+                return new TheAnswerFactory();
             }
         }, new AbstractModule() {
             @Provides
-            CompositeCollaborator compositeCollaborator(NumberProvider numberProvider) {
-                return new CompositeCollaborator(numberProvider);
+            CompositeCollaborator compositeCollaborator(NumberFactory numberFactory) {
+                return new CompositeCollaborator(numberFactory);
             }
         });
         final CompositeCollaborator compositeCollaborator = injector.getInstance(CompositeCollaborator.class);
         System.out.println(compositeCollaborator);
-        // a number provider has been provided
-        Assertions.assertNotNull(compositeCollaborator.numberProvider);
+        // a number factory has been provided
+        Assertions.assertNotNull(compositeCollaborator.numberFactory);
 
-        final NumberProvider numberProvider = injector.getInstance(NumberProvider.class);
-        System.out.println(numberProvider);
-        //Because numberProvider is not a Singleton
-        Assertions.assertNotEquals(numberProvider, compositeCollaborator.numberProvider);
+        final NumberFactory numberFactory = injector.getInstance(NumberFactory.class);
+        System.out.println(numberFactory);
+        //Because numberFactory is not a Singleton
+        Assertions.assertNotEquals(numberFactory, compositeCollaborator.numberFactory);
     }
 
 }

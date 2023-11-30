@@ -1,23 +1,23 @@
 package com.eurotech.demos.guice.providing.collaborators;
 
-import com.eurotech.demos.guice.NumberProvider;
+import com.eurotech.demos.guice.NumberFactory;
 
 public class CompositeCollaborator {
 
-    public final NumberProvider numberProvider;
+    public final NumberFactory numberFactory;
 
     private CompositeCollaborator() {
-        this.numberProvider = null;
+        this.numberFactory = null;
     }
 
-    public CompositeCollaborator(NumberProvider numberProvider) {
-        this.numberProvider = numberProvider;
+    public CompositeCollaborator(NumberFactory numberFactory) {
+        this.numberFactory = numberFactory;
     }
 
     @Override
     public String toString() {
         return "CompositeCollaborator{" +
-                "numberProvider=" + numberProvider +
+                "numberFactory=" + numberFactory +
                 '}';
     }
 }

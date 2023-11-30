@@ -8,6 +8,7 @@ This is the suggested running order:
 
 * ## Provising:
     * _ProvidingStrategiesDemo_: showcases guice module examples, and different strategies to provide collaborators
+    * _ProvidingEquivalenceDemos_: showcases equivalent alternatives to provide a single collaborator
     * _SingletonDemo_: Different ways to provide a collaborator as singleton (or not)
     * _MoreSingletonExamples_: expands the use of Singleton providing
     * _SetProvidingStrategies_: on how to provide multiple implementations of an interface, grouped into sets

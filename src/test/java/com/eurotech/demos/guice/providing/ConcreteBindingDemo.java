@@ -1,8 +1,8 @@
 package com.eurotech.demos.guice.providing;
 
-import com.eurotech.demos.guice.NumberProvider;
-import com.eurotech.demos.guice.providing.collaborators.CannedAnswerProvider;
-import com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider;
+import com.eurotech.demos.guice.NumberFactory;
+import com.eurotech.demos.guice.providing.collaborators.CannedAnswerFactory;
+import com.eurotech.demos.guice.providing.collaborators.TheAnswerFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.ConfigurationException;
 import com.google.inject.CreationException;
@@ -24,11 +24,11 @@ public class ConcreteBindingDemo {
             @Override
             protected void configure() {
                 //Direct binding of a concrete type, associated to itself
-                bind(TheAnswerProvider.class);
+                bind(TheAnswerFactory.class);
             }
         });
 
-        final TheAnswerProvider concreteInstance = injector.getInstance(TheAnswerProvider.class);
+        final TheAnswerFactory concreteInstance = injector.getInstance(TheAnswerFactory.class);
         System.out.println(concreteInstance);
         Assertions.assertNotNull(concreteInstance);
     }
@@ -39,11 +39,11 @@ public class ConcreteBindingDemo {
             @Override
             protected void configure() {
                 //Direct binding of a specific instance of the concrete type, associated to itself
-                bind(CannedAnswerProvider.class).toInstance(new CannedAnswerProvider(42));
+                bind(CannedAnswerFactory.class).toInstance(new CannedAnswerFactory(42));
             }
         });
 
-        final CannedAnswerProvider concreteInstance = injector.getInstance(CannedAnswerProvider.class);
+        final CannedAnswerFactory concreteInstance = injector.getInstance(CannedAnswerFactory.class);
         System.out.println(String.format("%s: %d", concreteInstance, concreteInstance.giveMeTheNumber()));
         Assertions.assertNotNull(concreteInstance);
     }
@@ -53,14 +53,14 @@ public class ConcreteBindingDemo {
         final Injector injector = Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(TheAnswerProvider.class);
+                bind(TheAnswerFactory.class);
             }
         });
 
         //Can't retrieve it based on the interface
-        Assertions.assertThrows(ConfigurationException.class, () -> injector.getInstance(NumberProvider.class), "Guice configuration errors:\n" +
+        Assertions.assertThrows(ConfigurationException.class, () -> injector.getInstance(NumberFactory.class), "Guice configuration errors:\n" +
                 "\n" +
-                "1) [Guice/MissingImplementation]: No implementation for NumberProvider was bound.\n" +
+                "1) [Guice/MissingImplementation]: No implementation for NumberFactory was bound.\n" +
                 "\n" +
                 "Learn more:\n" +
                 "  https://github.com/google/guice/wiki/MISSING_IMPLEMENTATION\n" +
@@ -70,7 +70,7 @@ public class ConcreteBindingDemo {
                 "======================\n" +
                 "Full classname legend:\n" +
                 "======================\n" +
-                "NumberProvider: \"com.eurotech.demos.guice.NumberProvider\"\n" +
+                "NumberFactory: \"com.eurotech.demos.guice.NumberFactory\"\n" +
                 "========================\n" +
                 "End of classname legend:\n" +
                 "========================\n" +
@@ -87,11 +87,11 @@ public class ConcreteBindingDemo {
         Assertions.assertThrows(CreationException.class, () -> Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(TheAnswerProvider.class).to(TheAnswerProvider.class);
+                bind(TheAnswerFactory.class).to(TheAnswerFactory.class);
             }
         }), "Unable to create injector, see the following errors:\n" +
                 "\n" +
-                "1) [Guice/RecursiveBinding]: Binding points to itself. Key: SimpleNumberProvider\n" +
+                "1) [Guice/RecursiveBinding]: Binding points to itself. Key: SimpleNumberFactory\n" +
                 "  at ConcreteBindingDemo$1.configure(ConcreteBindingDemo.java:24)\n" +
                 "\n" +
                 "1 error\n" +
@@ -100,7 +100,7 @@ public class ConcreteBindingDemo {
                 "Full classname legend:\n" +
                 "======================\n" +
                 "ConcreteBindingDemo$1: \"com.eurotech.demos.guice.providing.ConcreteBindingDemo$1\"\n" +
-                "SimpleNumberProvider:     \"com.eurotech.demos.guice.providing.collaborators.SimpleNumberProvider\"\n" +
+                "SimpleNumberFactory:     \"com.eurotech.demos.guice.providing.collaborators.SimpleNumberFactory\"\n" +
                 "========================\n" +
                 "End of classname legend:\n" +
                 "========================\n" +

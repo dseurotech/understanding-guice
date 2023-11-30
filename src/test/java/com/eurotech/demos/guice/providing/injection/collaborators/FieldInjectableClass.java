@@ -1,6 +1,6 @@
 package com.eurotech.demos.guice.providing.injection.collaborators;
 
-import com.eurotech.demos.guice.NumberProvider;
+import com.eurotech.demos.guice.NumberFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,13 +14,13 @@ public class FieldInjectableClass {
     @Inject
     public String name;
     @Inject
-    public NumberProvider numberProvider;
+    public NumberFactory numberFactory;
 
     @Override
     public String toString() {
         return "FieldInjectableClass{" +
                 "name='" + name + '\'' +
-                ", numberProvider=" + numberProvider +
+                ", numberFactory=" + numberFactory +
                 '}';
     }
 }

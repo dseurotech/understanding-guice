@@ -1,8 +1,8 @@
 package com.eurotech.demos.guice.providing.collaborators;
 
-import com.eurotech.demos.guice.NumberProvider;
+import com.eurotech.demos.guice.NumberFactory;
 
-public class TheAnswerProvider implements NumberProvider {
+public class TheAnswerFactory implements NumberFactory {
     @Override
     public int giveMeTheNumber() {
         return 42;

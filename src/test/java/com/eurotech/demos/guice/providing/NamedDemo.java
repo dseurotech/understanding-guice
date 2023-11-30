@@ -1,9 +1,9 @@
 package com.eurotech.demos.guice.providing;
 
 import com.eurotech.demos.guice.GuiceKeysUtils;
-import com.eurotech.demos.guice.NumberProvider;
-import com.eurotech.demos.guice.providing.collaborators.CannedAnswerProvider;
-import com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider;
+import com.eurotech.demos.guice.NumberFactory;
+import com.eurotech.demos.guice.providing.collaborators.CannedAnswerFactory;
+import com.eurotech.demos.guice.providing.collaborators.TheAnswerFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
@@ -32,34 +32,34 @@ public class NamedDemo {
                 new AbstractModule() {
                     @Override
                     protected void configure() {
-                        bind(NumberProvider.class).annotatedWith(Names.named("boring")).toInstance(new CannedAnswerProvider(3));
+                        bind(NumberFactory.class).annotatedWith(Names.named("boring")).toInstance(new CannedAnswerFactory(3));
                     }
                 },
                 new AbstractModule() {
                     @Named("toEverything")
                     @Provides
-                    NumberProvider theAnswerProvider() {
-                        return new TheAnswerProvider();
+                    NumberFactory theAnswerProvider() {
+                        return new TheAnswerFactory();
                     }
                 });
 
         System.out.println("Instances by name:");
-        final NumberProvider boringAnswer = injector.getInstance(GuiceKeysUtils.named(NumberProvider.class, "boring"));
+        final NumberFactory boringAnswer = injector.getInstance(GuiceKeysUtils.named(NumberFactory.class, "boring"));
         System.out.println(String.format("boring %s: %d", boringAnswer, boringAnswer.giveMeTheNumber()));
-        final NumberProvider theAnswer = injector.getInstance(GuiceKeysUtils.named(NumberProvider.class, "toEverything"));
+        final NumberFactory theAnswer = injector.getInstance(GuiceKeysUtils.named(NumberFactory.class, "toEverything"));
         System.out.println(String.format("toEverything: %s: %d", theAnswer, theAnswer.giveMeTheNumber()));
         Assertions.assertNotEquals(boringAnswer, theAnswer);
         //They do not contribute to sets
         Assertions.assertThrows(ConfigurationException.class, () ->
-                        injector.getInstance(GuiceKeysUtils.keyForSetOf(NumberProvider.class))
+                        injector.getInstance(GuiceKeysUtils.keyForSetOf(NumberFactory.class))
                 , "com.google.inject.ConfigurationException: Guice configuration errors:\n" +
                         "\n" +
-                        "1) [Guice/MissingImplementation]: No implementation for Set<NumberProvider> was bound.\n" +
+                        "1) [Guice/MissingImplementation]: No implementation for Set<NumberFactory> was bound.\n" +
                         "\n" +
                         "Did you mean?\n" +
-                        "    NumberProvider annotated with @Named(\"boring\") bound at NamedDemo$1.configure(NamedDemo.java:24)\n" +
+                        "    NumberFactory annotated with @Named(\"boring\") bound at NamedDemo$1.configure(NamedDemo.java:24)\n" +
                         "\n" +
-                        "    NumberProvider annotated with @Named(\"toEverything\") bound at NamedDemo$2.theAnswerProvider(NamedDemo.java:31)\n" +
+                        "    NumberFactory annotated with @Named(\"toEverything\") bound at NamedDemo$2.theAnswerSupplier(NamedDemo.java:31)\n" +
                         "\n" +
                         "Learn more:\n" +
                         "  https://github.com/google/guice/wiki/MISSING_IMPLEMENTATION\n" +
@@ -72,7 +72,7 @@ public class NamedDemo {
                         "Named:          \"com.google.inject.name.Named\"\n" +
                         "NamedDemo$1:    \"com.eurotech.demos.guice.providing.NamedDemo$1\"\n" +
                         "NamedDemo$2:    \"com.eurotech.demos.guice.providing.NamedDemo$2\"\n" +
-                        "NumberProvider: \"com.eurotech.demos.guice.NumberProvider\"\n" +
+                        "NumberFactory: \"com.eurotech.demos.guice.NumberFactory\"\n" +
                         "========================\n" +
                         "End of classname legend:\n" +
                         "========================\n")
@@ -85,56 +85,56 @@ public class NamedDemo {
                 new AbstractModule() {
                     @Override
                     protected void configure() {
-                        Multibinder<NumberProvider> setBinder = Multibinder.newSetBinder(binder(), NumberProvider.class, Names.named("firstSet"));
-                        setBinder.addBinding().toInstance(new CannedAnswerProvider(33));
+                        Multibinder<NumberFactory> setBinder = Multibinder.newSetBinder(binder(), NumberFactory.class, Names.named("firstSet"));
+                        setBinder.addBinding().toInstance(new CannedAnswerFactory(33));
 
-                        Multibinder<NumberProvider> setBinder2 = Multibinder.newSetBinder(binder(), NumberProvider.class, Names.named("secondSet"));
-                        setBinder2.addBinding().toInstance(new CannedAnswerProvider(44));
+                        Multibinder<NumberFactory> setBinder2 = Multibinder.newSetBinder(binder(), NumberFactory.class, Names.named("secondSet"));
+                        setBinder2.addBinding().toInstance(new CannedAnswerFactory(44));
 
-                        Multibinder<NumberProvider> unnamedSet = Multibinder.newSetBinder(binder(), NumberProvider.class);
-                        unnamedSet.addBinding().toInstance(new CannedAnswerProvider(55));
+                        Multibinder<NumberFactory> unnamedSet = Multibinder.newSetBinder(binder(), NumberFactory.class);
+                        unnamedSet.addBinding().toInstance(new CannedAnswerFactory(55));
                     }
                 },
                 new AbstractModule() {
                     @Named("firstSet")
                     @ProvidesIntoSet
-                    NumberProvider firstSetAnswerProvider() {
-                        return new TheAnswerProvider();
+                    NumberFactory firstSetAnswerFactory() {
+                        return new TheAnswerFactory();
                     }
 
                     @Named("secondSet")
                     @ProvidesIntoSet
-                    NumberProvider secondSetAnswerProvider() {
-                        return new TheAnswerProvider();
+                    NumberFactory secondSetAnswerFactory() {
+                        return new TheAnswerFactory();
                     }
 
                     @Named("secondSet")
                     @ProvidesIntoSet
                     @Singleton
-                    NumberProvider anotherAnswerForNamedSecondSet() {
-                        return new CannedAnswerProvider(66);
+                    NumberFactory anotherAnswerForNamedSecondSet() {
+                        return new CannedAnswerFactory(66);
                     }
 
                     @ProvidesIntoSet
-                    NumberProvider outOfNamedAnswerProvider() {
-                        return new TheAnswerProvider();
+                    NumberFactory outOfNamedAnswerFactory() {
+                        return new TheAnswerFactory();
                     }
                 });
         System.out.println("First set:");
-        final Set<NumberProvider> firstSetAnswers = injector.getInstance(GuiceKeysUtils.keyForSetOf(NumberProvider.class, "firstSet"));
+        final Set<NumberFactory> firstSetAnswers = injector.getInstance(GuiceKeysUtils.keyForSetOf(NumberFactory.class, "firstSet"));
         firstSetAnswers.forEach(sa -> System.out.println(String.format("%s: %d", sa, sa.giveMeTheNumber())));
         Assertions.assertEquals(2, firstSetAnswers.size());
         System.out.println("Second set:");
-        final Set<NumberProvider> secondSetAnswers = injector.getInstance(GuiceKeysUtils.keyForSetOf(NumberProvider.class, "secondSet"));
+        final Set<NumberFactory> secondSetAnswers = injector.getInstance(GuiceKeysUtils.keyForSetOf(NumberFactory.class, "secondSet"));
         secondSetAnswers.forEach(sa -> System.out.println(String.format("%s: %d", sa, sa.giveMeTheNumber())));
         Assertions.assertEquals(3, secondSetAnswers.size());
         System.out.println("Unnamed set:");
-        final Set<NumberProvider> unnamedSetAnswers = injector.getInstance(GuiceKeysUtils.keyForSetOf(NumberProvider.class));
+        final Set<NumberFactory> unnamedSetAnswers = injector.getInstance(GuiceKeysUtils.keyForSetOf(NumberFactory.class));
         unnamedSetAnswers.forEach(sa -> System.out.println(String.format("%s: %d", sa, sa.giveMeTheNumber())));
         Assertions.assertEquals(2, unnamedSetAnswers.size());
 
         System.out.println("Second set, second instantiation:");
-        final Set<NumberProvider> secondSetAnswersSecondInstance = injector.getInstance(GuiceKeysUtils.keyForSetOf(NumberProvider.class, "secondSet"));
+        final Set<NumberFactory> secondSetAnswersSecondInstance = injector.getInstance(GuiceKeysUtils.keyForSetOf(NumberFactory.class, "secondSet"));
         secondSetAnswersSecondInstance.forEach(sa -> System.out.println(String.format("%s: %d", sa, sa.giveMeTheNumber())));
 
         //First item is a singleton, so they are the same

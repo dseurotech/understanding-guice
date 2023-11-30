@@ -1,9 +1,9 @@
 package com.eurotech.demos.guice.providing;
 
 import com.eurotech.demos.guice.GuiceKeysUtils;
-import com.eurotech.demos.guice.NumberProvider;
-import com.eurotech.demos.guice.providing.collaborators.CannedAnswerProvider;
-import com.eurotech.demos.guice.providing.collaborators.TheAnswerProvider;
+import com.eurotech.demos.guice.NumberFactory;
+import com.eurotech.demos.guice.providing.collaborators.CannedAnswerFactory;
+import com.eurotech.demos.guice.providing.collaborators.TheAnswerFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -32,25 +32,25 @@ public class MapProvidingStrategies {
                     @Override
                     protected void configure() {
                         //Multibinder for inline instantiation (@Inject eligible)
-                        MapBinder<String, NumberProvider> mapBinder = MapBinder.newMapBinder(binder(), String.class, NumberProvider.class);
-                        mapBinder.addBinding("ONE").to(TheAnswerProvider.class);
+                        MapBinder<String, NumberFactory> mapBinder = MapBinder.newMapBinder(binder(), String.class, NumberFactory.class);
+                        mapBinder.addBinding("ONE").to(TheAnswerFactory.class);
                     }
                 },
                 new AbstractModule() {
                     @Override
                     protected void configure() {
                         //Each module can redefine the multibinder, despite the word "new" in "newSetBinder" they will all merge in the end
-                        MapBinder<String, NumberProvider> mapBinder = MapBinder.newMapBinder(binder(), String.class, NumberProvider.class);
+                        MapBinder<String, NumberFactory> mapBinder = MapBinder.newMapBinder(binder(), String.class, NumberFactory.class);
                         //toInstance automatically implied Singleton injection
-                        mapBinder.addBinding("TWO").toInstance(new CannedAnswerProvider(33));
+                        mapBinder.addBinding("TWO").toInstance(new CannedAnswerFactory(33));
                     }
                 },
                 new AbstractModule() {
                     @ProvidesIntoMap
                     @StringMapKey("THREE")
                         //Or just use this annotation in a providing method
-                    NumberProvider numberProvider() {
-                        return new CannedAnswerProvider(33);
+                    NumberFactory numberFactory() {
+                        return new CannedAnswerFactory(33);
                     }
                 },
                 new AbstractModule() {
@@ -60,11 +60,11 @@ public class MapProvidingStrategies {
                     }
                 });
         //fetch/create instances
-        final Map<String, NumberProvider> instances = injector.getInstance(GuiceKeysUtils.keyForMapOf(String.class, NumberProvider.class));
+        final Map<String, NumberFactory> instances = injector.getInstance(GuiceKeysUtils.keyForMapOf(String.class, NumberFactory.class));
         Assertions.assertEquals(3, instances.size());
         instances.entrySet().stream().forEach(System.out::println);
         //fetch/create instances again (different copies will be produces for 2 of the 3)
-        final Map<String, NumberProvider> instances2 = injector.getInstance(GuiceKeysUtils.keyForMapOf(String.class, NumberProvider.class));
+        final Map<String, NumberFactory> instances2 = injector.getInstance(GuiceKeysUtils.keyForMapOf(String.class, NumberFactory.class));
         instances2.entrySet().stream().forEach(System.out::println);
         //Proof that it is not the same set
         Assertions.assertNotEquals(instances, instances2);
@@ -74,9 +74,9 @@ public class MapProvidingStrategies {
 
     public static class ClassInjectingMap {
         @Inject
-        private Map<String, NumberProvider> providerMap;
+        private Map<String, NumberFactory> providerMap;
 
-        public Map<String, NumberProvider> getProviderMap() {
+        public Map<String, NumberFactory> getProviderMap() {
             return providerMap;
         }
     }
@@ -88,17 +88,17 @@ public class MapProvidingStrategies {
                 new AbstractModule() {
                     @Override
                     protected void configure() {
-                        MapBinder<String, NumberProvider> mapBinder = MapBinder.newMapBinder(binder(), String.class, NumberProvider.class);
+                        MapBinder<String, NumberFactory> mapBinder = MapBinder.newMapBinder(binder(), String.class, NumberFactory.class);
                         //Singleton is specified manually
-                        mapBinder.addBinding("ONE").to(TheAnswerProvider.class).in(Singleton.class);
+                        mapBinder.addBinding("ONE").to(TheAnswerFactory.class).in(Singleton.class);
                     }
                 },
                 new AbstractModule() {
                     @Override
                     protected void configure() {
-                        MapBinder<String, NumberProvider> mapBinder = MapBinder.newMapBinder(binder(), String.class, NumberProvider.class);
+                        MapBinder<String, NumberFactory> mapBinder = MapBinder.newMapBinder(binder(), String.class, NumberFactory.class);
                         //Singleton implicit in toInstance method
-                        mapBinder.addBinding("TWO").toInstance(new CannedAnswerProvider(33));
+                        mapBinder.addBinding("TWO").toInstance(new CannedAnswerFactory(33));
                     }
                 },
                 new AbstractModule() {
@@ -106,16 +106,16 @@ public class MapProvidingStrategies {
                     @StringMapKey("THREE")
                     //In this case we need to use the Singleton annotation
                     @Singleton
-                    NumberProvider numberProvider() {
-                        return new CannedAnswerProvider(33);
+                    NumberFactory numberFactory() {
+                        return new CannedAnswerFactory(33);
                     }
                 });
         //fetch/create instances
-        final Map<String, NumberProvider> instances = injector.getInstance(GuiceKeysUtils.keyForMapOf(String.class, NumberProvider.class));
+        final Map<String, NumberFactory> instances = injector.getInstance(GuiceKeysUtils.keyForMapOf(String.class, NumberFactory.class));
         instances.entrySet().stream().forEach(System.out::println);
         Assertions.assertEquals(3, instances.size());
         //fetch the same set of instances again
-        final Map<String, NumberProvider> instances2 = injector.getInstance(GuiceKeysUtils.keyForMapOf(String.class, NumberProvider.class));
+        final Map<String, NumberFactory> instances2 = injector.getInstance(GuiceKeysUtils.keyForMapOf(String.class, NumberFactory.class));
         instances2.entrySet().stream().forEach(System.out::println);
         //Proof that it is the same set
         Assertions.assertEquals(instances, instances2);

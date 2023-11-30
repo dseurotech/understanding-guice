@@ -1,7 +1,7 @@
 package com.eurotech.demos.guice.providing;
 
-import com.eurotech.demos.guice.NumberProvider;
-import com.eurotech.demos.guice.providing.collaborators.CannedAnswerProvider;
+import com.eurotech.demos.guice.NumberFactory;
+import com.eurotech.demos.guice.providing.collaborators.CannedAnswerFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -24,18 +24,18 @@ public class MoreSingletonExamples {
         System.out.println("With singleton:");
 
         //Initialize WITH singleton
-        final AtomicInteger numberProvider = new AtomicInteger(1);
+        final AtomicInteger numberSupplier = new AtomicInteger(1);
         final Injector plainInjector = Guice.createInjector(new AbstractModule() {
             @Provides
             @Singleton
-            NumberProvider random() {
-                return new CannedAnswerProvider(numberProvider.getAndIncrement());
+            NumberFactory random() {
+                return new CannedAnswerFactory(numberSupplier.getAndIncrement());
             }
         });
-        final NumberProvider numberProvider1 = plainInjector.getInstance(NumberProvider.class);
-        final NumberProvider numberProvider2 = plainInjector.getInstance(NumberProvider.class);
-        final int number1 = numberProvider1.giveMeTheNumber();
-        final int number2 = numberProvider2.giveMeTheNumber();
+        final NumberFactory numberFactory1 = plainInjector.getInstance(NumberFactory.class);
+        final NumberFactory numberFactory2 = plainInjector.getInstance(NumberFactory.class);
+        final int number1 = numberFactory1.giveMeTheNumber();
+        final int number2 = numberFactory2.giveMeTheNumber();
 
         System.out.println(String.format("Number 1: %d", number1));
         System.out.println(String.format("Number 2: %d", number2));
@@ -43,26 +43,26 @@ public class MoreSingletonExamples {
         Assertions.assertEquals(number1, number2);
         Assertions.assertEquals(1, number2);
         //As they are the same instance
-        System.out.println(String.format("Instance 1: %s", numberProvider1));
-        System.out.println(String.format("Instance 2: %s", numberProvider2));
-        Assertions.assertEquals(numberProvider1, numberProvider2);
+        System.out.println(String.format("Instance 1: %s", numberFactory1));
+        System.out.println(String.format("Instance 2: %s", numberFactory2));
+        Assertions.assertEquals(numberFactory1, numberFactory2);
     }
 
     @Test
     void withoutSingleton() throws InterruptedException {
         System.out.println("Without singleton:");
         //Initialize WITHOUT singleton
-        final AtomicInteger numberProvider = new AtomicInteger(1);
+        final AtomicInteger numberSupplier = new AtomicInteger(1);
         final Injector plainInjector = Guice.createInjector(new AbstractModule() {
             @Provides
-            NumberProvider random() {
-                return new CannedAnswerProvider(numberProvider.getAndIncrement());
+            NumberFactory random() {
+                return new CannedAnswerFactory(numberSupplier.getAndIncrement());
             }
         });
-        final NumberProvider numberProvider1 = plainInjector.getInstance(NumberProvider.class);
-        final NumberProvider numberProvider2 = plainInjector.getInstance(NumberProvider.class);
-        final int number1 = numberProvider1.giveMeTheNumber();
-        final int number2 = numberProvider2.giveMeTheNumber();
+        final NumberFactory numberFactory1 = plainInjector.getInstance(NumberFactory.class);
+        final NumberFactory numberFactory2 = plainInjector.getInstance(NumberFactory.class);
+        final int number1 = numberFactory1.giveMeTheNumber();
+        final int number2 = numberFactory2.giveMeTheNumber();
         System.out.println(String.format("Number 1: %d", number1));
         System.out.println(String.format("Number 2: %d", number2));
         //Different results
@@ -70,9 +70,9 @@ public class MoreSingletonExamples {
         Assertions.assertEquals(1, number1);
         Assertions.assertEquals(2, number2);
         //As thery are different instances
-        System.out.println(String.format("Instance 1: %s", numberProvider1));
-        System.out.println(String.format("Instance 2: %s", numberProvider2));
-        Assertions.assertNotEquals(numberProvider1, numberProvider2);
+        System.out.println(String.format("Instance 1: %s", numberFactory1));
+        System.out.println(String.format("Instance 2: %s", numberFactory2));
+        Assertions.assertNotEquals(numberFactory1, numberFactory2);
     }
 
 }
