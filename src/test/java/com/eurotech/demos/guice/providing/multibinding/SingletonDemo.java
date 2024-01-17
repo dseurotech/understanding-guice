@@ -1,4 +1,4 @@
-package com.eurotech.demos.guice.providing;
+package com.eurotech.demos.guice.providing.multibinding;
 
 import com.eurotech.demos.guice.NumberFactory;
 import com.google.inject.AbstractModule;

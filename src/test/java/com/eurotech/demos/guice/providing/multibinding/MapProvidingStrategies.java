@@ -1,4 +1,4 @@
-package com.eurotech.demos.guice.providing;
+package com.eurotech.demos.guice.providing.multibinding;
 
 import com.eurotech.demos.guice.GuiceKeysUtils;
 import com.eurotech.demos.guice.NumberFactory;
@@ -14,7 +14,6 @@ import com.google.inject.multibindings.StringMapKey;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
 import java.util.Map;
 
 /**
@@ -25,7 +24,7 @@ import java.util.Map;
 public class MapProvidingStrategies {
 
     @Test
-    void providesIntoSet() {
+    void providesIntoMap() {
         //Create Injector, with two different declaration methods across three modules
         final Injector injector = Guice.createInjector(
                 new AbstractModule() {
@@ -70,15 +69,6 @@ public class MapProvidingStrategies {
         Assertions.assertNotEquals(instances, instances2);
         //Bonus track: injection into a class
         Assertions.assertEquals(3, injector.getInstance(ClassInjectingMap.class).getProviderMap().size());
-    }
-
-    public static class ClassInjectingMap {
-        @Inject
-        private Map<String, NumberFactory> providerMap;
-
-        public Map<String, NumberFactory> getProviderMap() {
-            return providerMap;
-        }
     }
 
     @Test
